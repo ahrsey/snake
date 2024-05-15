@@ -1,6 +1,6 @@
 #include <raylib.h>
 
-typedef enum GameScreen { 
+typedef enum GameScreen {
   TITLE = 0,
   GAMEPLAY,
   ENDING 
@@ -20,9 +20,9 @@ typedef enum Collisions {
 
 typedef struct Player {
   Vector2 position;
-  Vector2 size;
   Directions dir;
   Collisions collision;
+  int size;
   int length;
   int speed;
 } Player;
@@ -42,9 +42,9 @@ int main(void) {
   player.speed = 200.0f;
   player.length = 5;
   player.dir = NORTH;
-  player.size = (Vector2){ 25, 25 };
+  player.size = 25;
   player.collision = NO_COLLISION;
-  player.position = (Vector2){ screenWidth/2-player.size.x, screenHeight/2-player.size.x };
+  player.position = (Vector2){ screenWidth/2-player.size, screenHeight/2-player.size };
 
   GameScreen currentScreen = TITLE;
 
@@ -67,7 +67,7 @@ int main(void) {
       case ENDING:
         {
           player.collision = NO_COLLISION;
-          player.position = (Vector2){ screenWidth/2-player.size.x, screenHeight/2-player.size.x };
+          player.position = (Vector2){ screenWidth/2-player.size, screenHeight/2-player.size };
 
           if (IsKeyPressed(KEY_ENTER)) {
             currentScreen = GAMEPLAY;
@@ -107,7 +107,9 @@ int main(void) {
 }
 
 void player_update(Player *player, float delta) {
-  DrawRectangle(player->position.x, player->position.y, player->size.x, player->size.y, RAYWHITE);
+  for(int i = 0; i < player->length; ++i) {
+    DrawRectangle(player->position.x + (i*player->size), player->position.y, player->size, player->size, RAYWHITE);
+  }
 
   if (IsKeyDown(KEY_LEFT)) player->dir = WEST;
   if (IsKeyDown(KEY_RIGHT)) player->dir = EAST;
@@ -128,6 +130,7 @@ void player_update(Player *player, float delta) {
       player->position.x -= player->speed*delta;
       break;
     default: break;
+
   }
 }
 
